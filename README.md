@@ -1,5 +1,4 @@
 # Black-Scholes vs. Monte Carlo: An Options Pricing Toolkit
-#### Video Demo: <URL HERE>
 #### Description:
 
 This project implements and compares two fundamental approaches to pricing
