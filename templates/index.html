@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Options Pricing Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-5" style="max-width: 700px;">
+        <h1 class="mb-4">Options Pricing Toolkit</h1>
+        <p class="text-muted">Black-Scholes vs. Monte Carlo, side by side.</p>
+
+        <form method="post" class="row g-3 mb-4">
+            <div class="col-6 col-md-4">
+                <label class="form-label">Stock price (S)</label>
+                <input type="number" step="0.01" name="S" class="form-control" value="{{ values.S }}" required>
+            </div>
+            <div class="col-6 col-md-4">
+                <label class="form-label">Strike (K)</label>
+                <input type="number" step="0.01" name="K" class="form-control" value="{{ values.K }}" required>
+            </div>
+            <div class="col-6 col-md-4">
+                <label class="form-label">Time (years, T)</label>
+                <input type="number" step="any" name="T" class="form-control" value="{{ values.T }}" required>
+            </div>
+            <div class="col-6 col-md-4">
+                <label class="form-label">Rate (r)</label>
+                <input type="number" step="0.0025" name="r" class="form-control" value="{{ values.r }}" required>
+            </div>
+            <div class="col-6 col-md-4">
+                <label class="form-label">Volatility (sigma)</label>
+                <input type="number" step="0.01" name="sigma" class="form-control" value="{{ values.sigma }}" required>
+            </div>
+            <div class="col-6 col-md-4">
+                <label class="form-label">Type</label>
+                <select name="option_type" class="form-select">
+                    <option value="call" {% if values.option_type == "call" %}selected{% endif %}>Call</option>
+                    <option value="put" {% if values.option_type == "put" %}selected{% endif %}>Put</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Calculate</button>
+            </div>
+        </form>
+
+        {% if results %}
+            {% if results.error %}
+                <div class="alert alert-danger">{{ results.error }}</div>
+            {% else %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Prices</h5>
+                        <p class="mb-1">Black-Scholes: <strong>${{ "%.4f"|format(results.bs_price) }}</strong></p>
+                        <p class="mb-0">Monte Carlo: <strong>${{ "%.4f"|format(results.mc_price) }}</strong>
+                            (&plusmn; {{ "%.4f"|format(results.mc_error) }})</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Greeks (Black-Scholes)</h5>
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                                {% for name, value in results.greeks.items() %}
+                                <tr>
+                                    <td>{{ name.capitalize() }}</td>
+                                    <td>{{ "%.4f"|format(value) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
